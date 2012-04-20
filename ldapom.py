@@ -622,4 +622,23 @@ class LdapNode(object):
         # Issue a LDAP Password Modify Extended Operation
         self._conn.set_password(_encode_utf8(self._dn), _encode_utf8(password))
 
+    ## @param args The arguments supplied which will be passed thru to _conn.query()
+    ## @param kwargs The keyword arguments supplied which will be passed thru to query()
+    ## @return LdapNode[]
+    def search(self, *args, **kwargs):
+        """
+        search inside the current LdapNode.
+
+        >>> list(users_node.search('uid=test'))
+        [<LdapNode: uid=test,dc=example,dc=com>]
+        """
+
+        # Override the base attr with the current dn
+        if len(args) > 2:
+            args[2] = _encode_utf8(self._dn)
+        else:
+            kwargs['base'] = _encode_utf8(self._dn)
+
+        return self._conn.search(*args, **kwargs)
+
 # vim: ai sw=4 expandtab
