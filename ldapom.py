@@ -29,6 +29,7 @@
 #
 
 import ldap
+import ldif
 
 LDAPOM_VERBOSE = False
 
@@ -621,5 +622,14 @@ class LdapNode(object):
         """
         # Issue a LDAP Password Modify Extended Operation
         self._conn.set_password(_encode_utf8(self._dn), _encode_utf8(password))
+
+    ## @param file A file object to write the LDIF to
+    ## @return None
+    def write_ldif(self, file):
+        """
+        write the current node LDIF to file
+        """
+        writer = ldif.LDIFWriter(file)
+        writer.unparse(self._dn, self._attr)
 
 # vim: ai sw=4 expandtab
